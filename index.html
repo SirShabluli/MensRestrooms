@@ -4,14 +4,13 @@
 <head>
     <!-- scroll video -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.1/TweenMax.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.1.1/gsap.min.js"></script>
-    <script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js"></script>
-    <script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/animation.gsap.min.js"></script>
-    <script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/debug.addIndicators.min.js"></script>
+  
+  
+    <!-- Load GSAP scroll trigger -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+
     <!--  -->
 
     <meta charset="UTF-8">
@@ -106,16 +105,16 @@
         </div>
     </section>
 
-    <section class="fourth"> <!-- never say more than hello + video -->
+    <section class="fourth" id="vidContainer"> <!-- never say more than hello + video -->
         <div class="wrapper">
-            <div class="row">
-                <div class="col5">
+            <div class="row" id="rowAbove">
+                <div class="col5" style="padding-bottom: 0;">
                     <h2> NEVER say more than “Hello” or “Are you well?”</h2>
                 </div>
 
-                <div class="row">
-                    <div class="container">
-                        <video loop autoplay playsinline muted id="video">
+                <div class="row" >
+                    <div class="container" >
+                        <video muted id="video">
                             <source src="videos/chat.mp4" type='video/mp4' />
                         </video>
                     </div>
@@ -416,53 +415,60 @@
     </script>
 
 
+
+
     <script type="text/javascript">
-        var vid = document.getElementById("video");
-        var h = document.getElementById("video");
-        var scrollPos = 0;
-        var lastPos = scrollPos;
-        var control = new ScrollMagic.Controller();
-        var sc1 = new ScrollMagic.Scene({
-            triggerElement: "#video",
-            triggerHook: 0.52
-        })
 
-        const startAnim = () => {
-            sc1.addTo(control)
-                .duration(h.clientHeight)
-                .on("progress", (e) => {
-                    scrollPos = e.progress;
-                    console.log("TIME : ", scrollPos);
-                });
+        // ScrollTrigger
+      
+        const video = document.getElementById("video");
 
-            setInterval(() => {
-                if (lastPos === scrollPos) return;
-                requestAnimationFrame(() => {
-                    vid.currentTime = vid.duration * scrollPos;
-                    vid.pause();
-                    lastPos = scrollPos;
-                });
-            }, 50);
-        }
+// Wait for the video metadata to load
+video.addEventListener('loadedmetadata', () => {
+    const videoDuration = video.duration || 1; // Prevent division by zero
+    const vidContainer = document.getElementById("vidContainer");
+    const rowAbove = document.getElementById("rowAbove");
 
-        const preloadVid = (v, callback) => {
-            const ready = () => {
-                v.removeEventListener('canplaythrough', ready);
-                let i = setInterval(() => {
-                    vid.pause();
-                    if (v.readyState > 3) {
-                        clearInterval(i);
-                        vid.currentTime = 0;
-                        callback();
-                    }
-                }, 50)
-            }
+    const rowAboveHeight = rowAbove.offsetHeight;
 
-            v.addEventListener('canplaythrough', ready, false);
-            v.play();
-        }
+// Set the height of the container based on video duration (in seconds)
+vidContainer.style.height = `${videoDuration * 100 + rowAboveHeight}px`; // Set height in pixels
+// vidContainer.style.border = `solid black 1px`;
+    gsap.registerPlugin(ScrollTrigger);
 
-        preloadVid(vid, startAnim)
+    // Create ScrollTrigger instance
+    ScrollTrigger.create({
+        trigger: "#video",
+        start: "center 35%",
+        end: `+=${videoDuration * 100} 80%`, // Scroll duration based on video length (in ms)
+        // markers: true,
+        pin: true,
+        
+        scrub: 1,
+        onUpdate: (self) => {
+            const progress = self.progress.toFixed(2); // Get scroll progress (0 to 1)
+            video.currentTime = progress * videoDuration; // Update video time based on scroll
+        },
+        onLeave: () => {
+            video.pause(); // Pause the video when leaving
+        },
+        onEnterBack: () => {
+            video.currentTime = 0; // Reset video to the beginning when entering back
+        },
+        onLeaveBack: () => {
+            video.pause(); // Pause the video when leaving back
+        },
+    });
+});
+
+
+
+
+// end
+
+
+
+
 
 
         // Click function for show the Modal
