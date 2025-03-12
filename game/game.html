@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Urinal Game</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+     <style>
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Dokdo&family=Reenie+Beanie&display=swap');
+
+img {
+    /* pointer-events: none;   */
+    user-select: none; /* Prevents text selection */
+    -webkit-user-drag: none; /* Prevents dragging in WebKit browsers */
+    -moz-user-select: none; /* Prevents dragging in Firefox */
+    padding: 10px;
+
+    
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+.containerGame {
+    width: 90vw;
+    height: 30vh;
+    display: flex;
+    justify-content: space-between; /* To space sections evenly */
+    align-items: center; /* To vertically align the sections */
+    gap: 20px;
+    margin: 0 auto; /* Center the container on the page */
+}
+
+.containes {
+    width: 90vw;
+    height: 30vh;
+    display: flex;
+    justify-content: center; /* To space sections evenly */
+    align-items: center; /* To vertically align the sections */
+    gap: 20px;
+    margin: 0 auto; /* Center the container on the page */
+}
+
+.occupied {
+    position: absolute; /* Position over the main image */
+    top: 50%; /* Start from the middle of the section */
+    left: 50%; /* Start from the middle of the section */
+    width: 135%; /* Make it responsive */
+    height: auto; /* Maintain aspect ratio */
+    transform: translate(-50%, -50%); /* Center it */
+    object-fit: contain; /* Ensure it fits within the section */
+    z-index: 1; /* Ensure it appears above the urinal image */
+   
+}
+
+.free {
+    
+    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.3); /* Shadow effect */
+    background: #f9f9f9; /* Light background to enhance the sticker look */
+    border: 1px solid rgba(0, 0, 0, 0.0);
+}
+
+.free:hover {
+    
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+  
+    /* border: 3px solid blue; */
+}
+
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.536);
+    
+}
+.modal-content {
+    font-family: Dokdo;
+    font-size: 2.5rem;
+    color: #f4f4f4;
+    position: absolute; /* Position it in the center */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0); /* Modal content background */
+    padding: 20px; /* Some padding */
+    
+    display: flex; /* Enable flexbox */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally */
+    text-align: center; /* Center text */
+    gap: 10px;
+  
+}
+
+#restart{
+    border: #fff solid 4px;
+    font-family: Dokdo;
+    font-size: 2.5rem;
+    color: #fff;
+    background-color: #ffffff00;
+}
+
+#giveup{
+    border: #fff solid 4px;
+    font-family: Dokdo;
+    font-size: 1.5rem;
+    color: #fff;
+    background-color: #ffffff00;   
+}
+
+.section {
+    flex: 1 1 18%;
+    height: 100%;
+    margin: 0 5px;
+    position: relative;
+    overflow: visible;
+}
+
+
+
+.countdown {
+    font-size: 48px; /* Large font size for visibility */
+    text-align: center; /* Center the text horizontally */
+    margin: 20px 0; /* Add some space above and below */
+    color: white; /* Change the text color to white (or any color you prefer) */
+}
+
+
+@keyframes fadeOutClip {
+    0% {
+        clip-path: inset(0 0 0 0); /* No clipping */
+    }
+    100% {
+        clip-path: inset(0 100% 0 0); /* Clip out to the right */
+    }
+}
+
+#mySvg {
+    animation: fadeOutClip forwards; /* Keep your animation */
+    width: 30%; /* Adjust size */
+    height: auto; /* Maintain aspect ratio */
+    clip-path: inset(0 0 0 0); /* Ensure it's visible at start */
+    position: relative; /* Ensure it is positioned */
+    z-index: 10; /* Higher than other elements */
+}
+
+     </style>
+
+</head>
+
+<body>
+
+    <header>
+    
+    </header>
+
+
+    <div id="modalCorrect" class="modal">
+        <div class="modal-content">
+            <h1>Correct!</h1>
+            <div id="countdown" class="countdown">Ready...</div> <!-- Countdown element -->
+
+        </div>
+    </div>
+
+    <div id="modalWrong" class="modal">
+        <div class="modal-content">
+
+            <h1>Wrong!</h1>
+            <button id="restart" onclick="restartGame()">Restart</button>
+            <button id="giveup" onclick="closeModal('modalWrong')">Give up</button>
+        </div>
+    </div>
+    <div class="containes">
+        <img id="mySvg" src="Img/arrough.svg" alt="Photo 1">
+    </div>
+    <div class="containerGame">
+
+        <div id="urin1" class="section">
+            <img src="Img/Asset 1.svg" alt="Photo 1">
+            <img src="Img/person1.gif" alt="Occupied" class="occupied" style="display: block;">
+        </div>
+        <div id="urin2" class="section">
+            <img src="Img/Asset 3.svg" alt="Photo 3">
+            <img src="Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
+        </div>
+        <div id="urin3" class="section">
+            <img src="Img/Asset 1.svg" alt="Photo 2">
+            <img src="Img/person1.gif" alt="Occupied" class="occupied" style="display: block;">
+        </div>
+        <div id="urin4" class="section">
+            <img src="Img/Asset 2.svg" alt="Photo 4">
+            <img src="Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
+        </div>
+        <div id="urin5" class="section">
+            <img src="Img/Asset 1.svg" alt="Photo 5">
+            <img src="Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
+        </div>
+    </div>
+
+
+
+    <script>
+
+        let timerExpired = false; // Track if the timer has expired
+        // Function to handle click events on sections
+        function handleSectionClick(event) {
+            const sectionId = event.target.closest('.section').id;
+            alert(`Section clicked: ${sectionId}`);
+        }
+    
+        // Adding event listeners to each section
+        document.querySelectorAll('.section').forEach(section => {
+            section.addEventListener('click', handleSectionClick);
+        });
+    
+    
+        // function closeModal() {
+        //     document.getElementById('fullScreenModal').style.display = 'none'; // Hide the modal
+        // }
+        // Function to start the countdown
+        function startCountdown() {
+            const countdownElement = document.getElementById('countdown');
+            const messages = ["Ready", "Set", "Go!"]; // Countdown messages
+            let index = 0;
+    
+            // Update the text immediately for "Ready..."
+            countdownElement.textContent = messages[index];
+    
+            const countdownInterval = setInterval(() => {
+                index++; // Move to the next message
+    
+                // If we reach the end of the messages, clear the interval
+                if (index < messages.length) {
+                    countdownElement.textContent = messages[index]; // Update the text
+                } else {
+                    clearInterval(countdownInterval);
+                    closeModal('modalCorrect');
+                }
+            }, 500); // Change every 1.33 seconds (~4 seconds / 3 messages)
+        }
+    
+        // Start the countdown when the page loads
+        window.onload = () => {
+    
+            generateSections(round1); // Generate sections for round 1
+        };
+    
+    
+        timerExpired = false; // Reset timer expired flag
+        let deadlineInterval; // Variable to hold the countdown interval
+    
+        function deadlineTimer(timeLimit) {
+            const countdownElement = document.getElementById('countdown');
+            let timeLeft = timeLimit;
+    
+            timerExpired = false; // Reset the timer expired flag
+    
+    
+            // Clear any existing countdown intervals
+            if (deadlineInterval) {
+                clearInterval(deadlineInterval);
+            }
+    
+            deadlineInterval = setInterval(() => {
+                timeLeft--;
+    
+    
+                if (timeLeft < 0) {
+                    clearInterval(deadlineInterval);
+                    timerExpired = true; // Set timer expired flag
+                    closeModal('modalCorrect'); // Close correct modal
+                    document.getElementById('modalWrong').style.display = 'block'; // Show wrong modal
+                }
+            }, 1000); // Update every second
+        }
+    
+        //Deadline Timer Starter
+        function startDeadlineTimer(timeLimit) {
+            const deadlineElement = document.getElementById('countdown'); // Use the same element for displaying time left
+            let timeLeft = timeLimit;
+    
+            deadlineElement.textContent = `Time left: ${timeLeft}s`; // Initial display
+    
+            const deadlineInterval = setInterval(() => {
+                timeLeft--;
+                deadlineElement.textContent = `Time left: ${timeLeft}s`; // Update countdown display
+    
+                if (timeLeft < 0) {
+                    clearInterval(deadlineInterval);
+                    timerExpired = true; // Set timer expired flag
+                    closeModal('modalCorrect'); // Close correct modal
+                    document.getElementById('modalWrong').style.display = 'block'; // Show wrong modal
+                }
+            }, 1000); // Update every second
+        }
+    
+    
+        //ROUNDS!
+        function checkAnswer(sectionId, round) {
+        const correctAnswers = round.correctAnswers;
+    
+        if (correctAnswers.includes(sectionId)) {
+            document.getElementById('modalCorrect').style.display = 'block'; // Show correct modal
+            startCountdown(); // Start the countdown for the correct modal
+            deadlineTimer(round.timeLimit); // Start the deadline timer for the current round
+    
+            // Load next round after a brief delay
+            setTimeout(() => {
+                closeModal('modalCorrect'); // Close the correct modal
+                currentRoundIndex++; // Move to the next round
+                if (currentRoundIndex < rounds.length) {
+                        generateSections(rounds[currentRoundIndex]); // Generate sections for the next round
+                    } else {
+                        alert("YOU WON BIAUTCH!");
+                                    }
+                const arrow = document.getElementById('mySvg');
+                arrow.style.animation = 'none'; // Reset any existing animation
+                arrow.offsetHeight; // Trigger reflow to allow animation to restart
+                arrow.style.clipPath = 'inset(0 0 0 0)'; // Ensure it's fully visible before starting
+                arrow.style.animation = `fadeOutClip ${round.timeLimit - 0.4}s linear forwards`; // Start the fade-out animation
+    
+                // Move to the next round after the animation ends
+                arrow.addEventListener('animationend', () => {
+                    // Move to the next round
+                    
+                   
+                });
+            }, 1500); // Wait 2 seconds to show the correct modal before closing
+        } else {
+            document.getElementById('modalWrong').style.display = 'block'; // Show wrong modal
+        }
+    }
+    
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none'; // Hide the specified modal
+        }
+    
+        function generateSections(round) {
+        const container = document.querySelector('.containerGame');
+        const arrow = document.getElementById('mySvg');
+    
+        // Clear existing sections in case of rerun
+        container.innerHTML = '';
+    
+        // Make the arrow visible again and reset its properties
+        arrow.style.display = 'block'; // Show the arrow
+        arrow.style.clipPath = 'inset(0 0 0 0)'; // Ensure it's fully visible
+        arrow.style.animation = 'none'; // Reset any existing animation
+    
+        round.sections.forEach((value, index) => {
+            const section = document.createElement('div');
+            section.id = `urin${index + 1}`;
+            section.className = 'section';
+    
+            if (value === 1) {
+                section.innerHTML = `
+                    <img src="Img/Asset ${index + 1}.svg" alt="Photo ${index + 1}" style="display: block;" class="free">
+                    <img src="Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
+                `;
+            } else if (value === 2) {
+                section.innerHTML = `
+                    <img src="Img/Asset ${index + 1}.svg" alt="Photo ${index + 1}" style="display: block;">
+                    <img src="Img/person1.gif" alt="Occupied" class="occupied" style="display: block;">
+                `;
+                section.style.pointerEvents = 'none'; // Make it unclickable
+            } else if (value === 0) {
+                section.style.pointerEvents = 'none'; // Make it unclickable
+                section.innerHTML = `
+                    <img src="Img/Asset ${index + 1}.svg" alt="Photo ${index + 1}" style="display: none;">
+                    <img src="Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
+                `;
+            }
+    
+            container.appendChild(section);
+            // Add click event listener for checking answers
+            section.addEventListener('click', () => {
+                checkAnswer(section.id, round); // Pass the current round object
+            });
+        });
+    }
+    
+        //rounds
+    
+        const round1 = {
+            sections: [0, 2, 1, 1, 0], // Section states
+            correctAnswers: ["urin4"], // Correct answers for round 1
+            timeLimit: 4 //Time limit in seconds
+        };
+    
+        const round2 = {
+            sections: [0, 1, 1, 2, 0], // Different section states
+            correctAnswers: ["urin2"], // Correct answers for round 2
+            timeLimit: 3 //Time limit in seconds
+        };
+    
+        const round3 = {
+            sections: [0, 1, 2, 1, 1], // Another variation
+            correctAnswers: ["urin5"], // Correct answers for round 3
+            timeLimit: 3 //Time limit in seconds
+        };
+    
+        const round4 = {
+            sections: [0, 2, 1, 2, 1], // Another variation
+            correctAnswers: ["urin5"], // Correct answers for round 3
+            timeLimit: 2 //Time limit in seconds
+        };
+    
+        const round5 = {
+            sections: [0, 2, 1, 1, 1], // Another variation
+            correctAnswers: ["urin4", "urin5"], // Correct answers for round 3
+            timeLimit: 2 //Time limit in seconds
+        };
+    
+        const round6 = {
+            sections: [1, 1, 1, 2, 1], // Another variation
+            correctAnswers: ["urin1"], // Correct answers for round 3
+            timeLimit: 2 //Time limit in seconds
+        };
+    
+        const round7 = {
+            sections: [2, 1, 1, 2, 1], // Another variation
+            correctAnswers: ["urin5"], // Correct answers for round 3
+            timeLimit: 2 //Time limit in seconds
+        };
+    
+        const round8 = {
+            sections: [1, 2, 1, 2, 1], // Another variation
+            correctAnswers: ["urin1", "urin5"], // Correct answers for round 3
+            timeLimit: 2 //Time limit in seconds
+        };
+    
+        const round9 = {
+            sections: [2, 2, 1, 1, 2], // Another variation
+            correctAnswers: ["urin4"], // Correct answers for round 3
+            timeLimit: 2 //Time limit in seconds
+        };
+    
+        const round10 = {
+            sections: [2, 1, 2, 2, 1], // Another variation
+            correctAnswers: ["urin5"], // Correct answers for round 3
+            timeLimit: 2 //Time limit in seconds
+        };
+    
+        //ROUND LOADING
+        let currentRoundIndex = 0;
+        const rounds = [round1, round2, round3, round4, round5, round6, round7, round8, round9, round10]; // Array of rounds
+    
+        function restartGame() {
+            currentRoundIndex = 0; // Reset to the first round
+            generateSections(rounds[currentRoundIndex]); // Generate sections for the first round
+            closeModal('modalWrong'); // Close the wrong modal
+        }
+    
+    
+    
+    </script>
+
+
+</body>
+
+</html>
+

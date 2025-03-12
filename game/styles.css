@@ -1,0 +1,150 @@
+/* Imports */
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Dokdo&family=Reenie+Beanie&display=swap');
+
+img {
+    /* pointer-events: none;   */
+    user-select: none; /* Prevents text selection */
+    -webkit-user-drag: none; /* Prevents dragging in WebKit browsers */
+    -moz-user-select: none; /* Prevents dragging in Firefox */
+    padding: 10px;
+
+    
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.containerGame {
+    width: 75vw;
+    height: 30vh;
+    display: flex;
+    justify-content: space-between; /* To space sections evenly */
+    align-items: center; /* To vertically align the sections */
+    gap: 20px;
+    margin: 0 auto; /* Center the container on the page */
+}
+
+.containes {
+    width: 90vw;
+    height: 30vh;
+    display: flex;
+    justify-content: center; /* To space sections evenly */
+    align-items: center; /* To vertically align the sections */
+    gap: 20px;
+    margin: 0 auto; /* Center the container on the page */
+}
+
+.occupied {
+    position: absolute; /* Position over the main image */
+    top: 50%; /* Start from the middle of the section */
+    left: 50%; /* Start from the middle of the section */
+    width: 135%; /* Make it responsive */
+    height: auto; /* Maintain aspect ratio */
+    transform: translate(-50%, -50%); /* Center it */
+    object-fit: contain; /* Ensure it fits within the section */
+    z-index: 1; /* Ensure it appears above the urinal image */
+   
+}
+
+.free {
+    
+    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.3); /* Shadow effect */
+    background: #f9f9f9; /* Light background to enhance the sticker look */
+    border: 1px solid rgba(0, 0, 0, 0.0);
+}
+
+.free:hover {
+    
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+  
+    /* border: 3px solid blue; */
+}
+
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.536);
+    
+}
+.modal-content {
+    font-family: Dokdo;
+    font-size: 2.5rem;
+    color: #f4f4f4;
+    position: absolute; /* Position it in the center */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0); /* Modal content background */
+    padding: 20px; /* Some padding */
+    
+    display: flex; /* Enable flexbox */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally */
+    text-align: center; /* Center text */
+    gap: 10px;
+  
+}
+
+#restart{
+    border: #fff solid 4px;
+    font-family: Dokdo;
+    font-size: 2.5rem;
+    color: #fff;
+    background-color: #ffffff00;
+}
+
+#giveup{
+    border: #fff solid 4px;
+    font-family: Dokdo;
+    font-size: 1.5rem;
+    color: #fff;
+    background-color: #ffffff00;   
+}
+
+.section {
+    flex: 1 1 18%;
+    height: 100%;
+    margin: 0 5px;
+    position: relative;
+    overflow: visible;
+}
+
+
+
+.countdown {
+    font-size: 48px; /* Large font size for visibility */
+    text-align: center; /* Center the text horizontally */
+    margin: 20px 0; /* Add some space above and below */
+    color: white; /* Change the text color to white (or any color you prefer) */
+}
+
+
+@keyframes fadeOutClip {
+    0% {
+        clip-path: inset(0 0 0 0); /* No clipping */
+    }
+    100% {
+        clip-path: inset(0 100% 0 0); /* Clip out to the right */
+    }
+}
+
+#mySvg {
+    animation: fadeOutClip forwards; /* Keep your animation */
+    width: 30%; /* Adjust size */
+    height: auto; /* Maintain aspect ratio */
+    clip-path: inset(0 0 0 0); /* Ensure it's visible at start */
+    position: relative; /* Ensure it is positioned */
+    z-index: 10; /* Higher than other elements */
+}
