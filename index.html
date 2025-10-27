@@ -633,11 +633,14 @@
         // ==================== SCROLL LOCK ====================
         let scrollLocked = false;
         let lockScrollPosition = 0;
+        let eyeCompleted = false;
+        let eyeScrollLocked = false;
+        let eyeLockScrollPosition = 0;
 
         function lockScroll() {
             scrollLocked = true;
             lockScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-            console.log('Locked at position:', lockScrollPosition);
+            console.log('Game locked at position:', lockScrollPosition);
         }
 
         function unlockScroll() {
@@ -645,16 +648,28 @@
             scrollLocked = false;
         }
 
+        function lockEyeScroll() {
+            eyeScrollLocked = true;
+            eyeLockScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+            console.log('Eye locked at position:', eyeLockScrollPosition);
+        }
+
+        function unlockEyeScroll() {
+            eyeCompleted = true;
+            eyeScrollLocked = false;
+        }
+
         // Prevent scrolling down when locked
         function preventScrollDown(e) {
-            if (scrollLocked && !gameCompleted) {
+            if ((scrollLocked && !gameCompleted) || (eyeScrollLocked && !eyeCompleted)) {
                 const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+                const lockPosition = scrollLocked ? lockScrollPosition : eyeLockScrollPosition;
 
                 // If trying to scroll down past lock position
-                if (currentScroll > lockScrollPosition) {
+                if (currentScroll > lockPosition) {
                     e.preventDefault();
                     e.stopPropagation();
-                    window.scrollTo(0, lockScrollPosition);
+                    window.scrollTo(0, lockPosition);
                     return false;
                 }
             }
@@ -664,7 +679,7 @@
         window.addEventListener('wheel', preventScrollDown, { passive: false });
         window.addEventListener('touchmove', preventScrollDown, { passive: false });
         window.addEventListener('keydown', (e) => {
-            if (scrollLocked && !gameCompleted) {
+            if ((scrollLocked && !gameCompleted) || (eyeScrollLocked && !eyeCompleted)) {
                 // Prevent arrow down, page down, space, end
                 if ([40, 34, 32, 35].includes(e.keyCode)) {
                     e.preventDefault();
@@ -792,6 +807,15 @@
                     } else {
                         alert("YOU WON BIAUTCH!");
                         unlockScroll(); // Unlock when you win
+
+                        // Scroll down a bit after unlocking
+                        setTimeout(() => {
+                            const currentScroll = window.pageYOffset;
+                            window.scrollTo({
+                                top: currentScroll + 300,
+                                behavior: 'smooth'
+                            });
+                        }, 500);
                     }
 
                     const arrow = document.getElementById('mySvg');
@@ -867,6 +891,15 @@
             closeGameModal('modalWrong');
             closeGameModal('modalCorrect'); // Also close correct modal if open
             unlockScroll(); // Unlock scrolling so user can continue
+
+            // Scroll down a bit after giving up
+            setTimeout(() => {
+                const currentScroll = window.pageYOffset;
+                window.scrollTo({
+                    top: currentScroll + 500,
+                    behavior: 'smooth'
+                });
+            }, 500);
         }
 
         // Force page to start at top on load/refresh
@@ -898,6 +931,21 @@
             // Lock when game section top reaches near the top of viewport (100px from top)
             if (rect.top <= 200) {
                 lockScroll();
+            }
+        });
+
+        // Detect when eyettes section reaches top and lock
+        window.addEventListener('scroll', () => {
+            if (eyeCompleted || eyeScrollLocked) return;
+
+            const eyeSection = document.querySelector('.eyettes');
+            if (eyeSection) {
+                const rect = eyeSection.getBoundingClientRect();
+
+                // Lock when eye section top reaches near the top of viewport (100px from top)
+                if (rect.top <= 100) {
+                    lockEyeScroll();
+                }
             }
         });
 
@@ -1088,10 +1136,18 @@
 
                                 setTimeout(function () {
                                     mask.style.display = 'none';
-                                    var nextSection = document.querySelector('.washHands');
-                                    if (nextSection) {
-                                        nextSection.scrollIntoView({ behavior: 'smooth' });
-                                    }
+
+                                    // Unlock eye scroll
+                                    unlockEyeScroll();
+
+                                    // Scroll down a bit after unlocking
+                                    setTimeout(() => {
+                                        const currentScroll = window.pageYOffset;
+                                        window.scrollTo({
+                                            top: currentScroll + 300,
+                                            behavior: 'smooth'
+                                        });
+                                    }, 500);
                                 }, 1500);
                             }, 2000);
                         });
