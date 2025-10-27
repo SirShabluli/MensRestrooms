@@ -1128,6 +1128,7 @@
 
 
                             mask.style.display = 'block';
+                            mask.style.visibility = 'visible';
 
 
                             setTimeout(function () {
@@ -1135,10 +1136,25 @@
                                 modalParagraph.textContent = "you just peed.";
 
                                 setTimeout(function () {
-                                    mask.style.display = 'none';
-
-                                    // Unlock eye scroll
+                                    // Unlock eye scroll BEFORE hiding modal
                                     unlockEyeScroll();
+
+                                    mask.style.display = 'none';
+                                    mask.style.visibility = 'hidden';
+
+                                    // Reset eye buttons
+                                    lRightClicked = 0;
+                                    lLeftClicked = 0;
+                                    lUpClicked = 0;
+                                    lDownClicked = 0;
+
+                                    // Reset button colors back to original
+                                    buttons.forEach(function(btn) {
+                                        btn.style.color = '';
+                                    });
+
+                                    // Hide "Look straight" button again
+                                    lookStraightButton.style.display = 'none';
 
                                     // Scroll down a bit after unlocking
                                     setTimeout(() => {
