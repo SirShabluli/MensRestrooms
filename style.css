@@ -276,9 +276,13 @@ section.first h2 {
 }
 
 .game {
-  height: auto;  /* Let content determine height */
-  min-height: 50vh;  /* Minimum height */
-  padding: 50px 0;  /* Some breathing room */
+  height: 100vh; /* Full viewport height */
+  min-height: 100vh;
+  padding: 0; /* No padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align to top */
+  padding-top: 5vh; /* Small breathing room at top */
 }
 
 /* EYE shit */

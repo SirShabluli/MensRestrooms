@@ -22,11 +22,14 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Dokdo&family=Reenie+Beanie&display=swap');
 
-        /* MASTER GAME CONTAINER - Change width here to resize EVERYTHING */
-        .game {
-            width: 60vw;           /* ← CHANGE THIS to resize whole game */
+        /* Game content wrapper - controls game element sizes */
+        .game-content {
+            width: 60vw;           /* ← CHANGE THIS to resize game elements */
             max-width: 1000px;     /* Max size cap */
             margin: 0 auto;
+            border: 3px solid #000; /* Black border */
+            padding: 20px;         /* Space inside border */
+            border-radius: 10px;   /* Rounded corners */
         }
 
         .containerGame {
@@ -34,7 +37,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end; /* Align to bottom so person sits on urinal */
-            gap: 2%;               /* Responsive gap */
+            gap: 3%;               /* Bigger gap between urinals */
             margin: 0 auto;
         }
 
@@ -48,9 +51,9 @@
 
         .occupied {
             position: absolute;
-            bottom: 0;             /* ← Person sits ON TOP of urinal */
+            bottom: 0%;           /* Lift person up slightly (responsive) */
             left: 50%;
-            width: 130%;           /* 100% of urinal width (bigger) */
+            width: 150%;           /* 130% of urinal width */
             height: auto;
             transform: translateX(-50%); /* Center horizontally */
             object-fit: contain;
@@ -380,16 +383,19 @@
             <div class="game-modal-content">
                 <h1>Wrong!</h1>
                 <button id="restart" onclick="restartGame()">Restart</button>
-                <button id="giveup" onclick="closeGameModal('modalWrong')">Give up</button>
+                <button id="giveup" onclick="giveUpGame()">Give up</button>
             </div>
         </div>
 
-        <!-- Game Content -->
-        <div class="containes">
-            <img id="mySvg" src="game/Img/arrough.svg" alt="Arrow">
-        </div>
+        <!-- Game Content Wrapper -->
+        <div class="game-content">
+            <!-- Arrow -->
+            <div class="containes">
+                <img id="mySvg" src="game/Img/arrough.svg" alt="Arrow">
+            </div>
 
-        <div class="containerGame">
+            <!-- Urinals -->
+            <div class="containerGame">
             <div id="urin1" class="section">
                 <img src="game/Img/Asset 1.svg" alt="Photo 1">
                 <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: block;">
@@ -411,6 +417,10 @@
                 <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
             </div>
         </div>
+        <!-- End urinals -->
+
+        </div>
+        <!-- End game-content wrapper -->
 
     </section>
 
@@ -618,6 +628,50 @@
         let timerExpired = false;
         let deadlineInterval;
         let currentRoundIndex = 0;
+        let gameCompleted = false;
+
+        // ==================== SCROLL LOCK ====================
+        let scrollLocked = false;
+        let lockScrollPosition = 0;
+
+        function lockScroll() {
+            scrollLocked = true;
+            lockScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+            console.log('Locked at position:', lockScrollPosition);
+        }
+
+        function unlockScroll() {
+            gameCompleted = true;
+            scrollLocked = false;
+        }
+
+        // Prevent scrolling down when locked
+        function preventScrollDown(e) {
+            if (scrollLocked && !gameCompleted) {
+                const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+                // If trying to scroll down past lock position
+                if (currentScroll > lockScrollPosition) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.scrollTo(0, lockScrollPosition);
+                    return false;
+                }
+            }
+        }
+
+        // Add event listeners for all scroll events
+        window.addEventListener('wheel', preventScrollDown, { passive: false });
+        window.addEventListener('touchmove', preventScrollDown, { passive: false });
+        window.addEventListener('keydown', (e) => {
+            if (scrollLocked && !gameCompleted) {
+                // Prevent arrow down, page down, space, end
+                if ([40, 34, 32, 35].includes(e.keyCode)) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
 
         // ==================== GAME ROUNDS ====================
         const round1 = {
@@ -737,6 +791,7 @@
                         generateSections(rounds[currentRoundIndex]);
                     } else {
                         alert("YOU WON BIAUTCH!");
+                        unlockScroll(); // Unlock when you win
                     }
 
                     const arrow = document.getElementById('mySvg');
@@ -801,9 +856,50 @@
             closeGameModal('modalWrong');
         }
 
+        function giveUpGame() {
+            // Clear any running timers
+            if (deadlineInterval) {
+                clearInterval(deadlineInterval);
+            }
+
+            currentRoundIndex = 0; // Reset to first round
+            generateSections(rounds[currentRoundIndex]); // Regenerate round 1
+            closeGameModal('modalWrong');
+            closeGameModal('modalCorrect'); // Also close correct modal if open
+            unlockScroll(); // Unlock scrolling so user can continue
+        }
+
+        // Force page to start at top on load/refresh
+        if (history.scrollRestoration) {
+            history.scrollRestoration = 'manual';
+        }
+
+        window.addEventListener('beforeunload', () => {
+            window.scrollTo(0, 0);
+        });
+
         window.onload = () => {
             generateSections(round1);
+            // Make sure page starts at the top
+            window.scrollTo(0, 0);
+            setTimeout(() => window.scrollTo(0, 0), 0);
         };
+
+        // Also force scroll to top immediately
+        window.scrollTo(0, 0);
+
+        // Detect when game section reaches top and lock
+        window.addEventListener('scroll', () => {
+            if (gameCompleted || scrollLocked) return;
+
+            const gameSection = document.querySelector('.game');
+            const rect = gameSection.getBoundingClientRect();
+
+            // Lock when game section top reaches near the top of viewport (100px from top)
+            if (rect.top <= 200) {
+                lockScroll();
+            }
+        });
 
         // ==================== VIDEO SCROLLTRIGGER ====================
         const video = document.getElementById("video");
