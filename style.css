@@ -276,7 +276,9 @@ section.first h2 {
 }
 
 .game {
-  height: 100vh;
+  height: auto;  /* Let content determine height */
+  min-height: 50vh;  /* Minimum height */
+  padding: 50px 0;  /* Some breathing room */
 }
 
 /* EYE shit */

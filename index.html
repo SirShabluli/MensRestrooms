@@ -17,6 +17,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Artichoke</title>
+
+    <!-- Game CSS -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Dokdo&family=Reenie+Beanie&display=swap');
+
+        /* MASTER GAME CONTAINER - Change width here to resize EVERYTHING */
+        .game {
+            width: 60vw;           /* ← CHANGE THIS to resize whole game */
+            max-width: 1000px;     /* Max size cap */
+            margin: 0 auto;
+        }
+
+        .containerGame {
+            width: 100%;           /* Fill parent */
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end; /* Align to bottom so person sits on urinal */
+            gap: 2%;               /* Responsive gap */
+            margin: 0 auto;
+        }
+
+        .containes {
+            width: 100%;           /* Fill parent */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px auto;
+        }
+
+        .occupied {
+            position: absolute;
+            bottom: 0;             /* ← Person sits ON TOP of urinal */
+            left: 50%;
+            width: 130%;           /* 100% of urinal width (bigger) */
+            height: auto;
+            transform: translateX(-50%); /* Center horizontally */
+            object-fit: contain;
+            z-index: 1;
+        }
+
+        .free {
+            box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.3);
+            background: #f9f9f9;
+            border: 1px solid rgba(0, 0, 0, 0.0);
+            width: 100%;           /* Fill section */
+        }
+
+        .free:hover {
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+        }
+
+        .game-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.536);
+        }
+
+        .game-modal-content {
+            font-family: Dokdo;
+            font-size: 2rem;
+            color: #f4f4f4;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+        }
+
+        #restart {
+            border: #fff solid 4px;
+            font-family: Dokdo;
+            font-size: 2rem;
+            color: #fff;
+            background-color: #ffffff00;
+            cursor: pointer;
+        }
+
+        #giveup {
+            border: #fff solid 4px;
+            font-family: Dokdo;
+            font-size: 1.5rem;
+            color: #fff;
+            background-color: #ffffff00;
+            cursor: pointer;
+        }
+
+        .section {
+            flex: 1 1 18%;
+            height: 100%;
+            margin: 0 5px;
+            position: relative;
+            overflow: visible;
+        }
+
+        .countdown {
+            font-size: 48px;
+            text-align: center;
+            margin: 20px 0;
+            color: white;
+        }
+
+        @keyframes fadeOutClip {
+            0% {
+                clip-path: inset(0 0 0 0);
+            }
+            100% {
+                clip-path: inset(0 100% 0 0);
+            }
+        }
+
+        #mySvg {
+            animation: fadeOutClip forwards;
+            width: 15%;
+            height: auto;
+            clip-path: inset(0 0 0 0);
+            position: relative;
+            z-index: 10;
+        }
+    </style>
 </head>
 
 <body>
@@ -230,21 +360,59 @@
     <section class="preGame">
         <div class="row">
             <div class="col7">
-                <h2 class="text-center">if no free urinal exists between you and the other person</h2>
+                <h2 class="text-center">wait for a free urinal</h2>
             </div>
-    
         </div>
     </section>
 
-<!-- GAME -->
+    <!-- GAME -->
+    <section class="game">
 
-<section class="game"><!-- Urinals 1 person -->
+        <!-- Game Modals -->
+        <div id="modalCorrect" class="game-modal">
+            <div class="game-modal-content">
+                <h1>Correct!</h1>
+                <div id="countdown" class="countdown">Ready...</div>
+            </div>
+        </div>
 
+        <div id="modalWrong" class="game-modal">
+            <div class="game-modal-content">
+                <h1>Wrong!</h1>
+                <button id="restart" onclick="restartGame()">Restart</button>
+                <button id="giveup" onclick="closeGameModal('modalWrong')">Give up</button>
+            </div>
+        </div>
 
-    <div class="row">
-        <iframe src="./game/game.html"></iframe>
-    </div>
-</section>
+        <!-- Game Content -->
+        <div class="containes">
+            <img id="mySvg" src="game/Img/arrough.svg" alt="Arrow">
+        </div>
+
+        <div class="containerGame">
+            <div id="urin1" class="section">
+                <img src="game/Img/Asset 1.svg" alt="Photo 1">
+                <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: block;">
+            </div>
+            <div id="urin2" class="section">
+                <img src="game/Img/Asset 3.svg" alt="Photo 3">
+                <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
+            </div>
+            <div id="urin3" class="section">
+                <img src="game/Img/Asset 1.svg" alt="Photo 2">
+                <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: block;">
+            </div>
+            <div id="urin4" class="section">
+                <img src="game/Img/Asset 2.svg" alt="Photo 4">
+                <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
+            </div>
+            <div id="urin5" class="section">
+                <img src="game/Img/Asset 1.svg" alt="Photo 5">
+                <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
+            </div>
+        </div>
+
+    </section>
 
 
 
@@ -446,23 +614,210 @@
 
 
     <script type="text/javascript">
+        // ==================== GAME VARIABLES ====================
+        let timerExpired = false;
+        let deadlineInterval;
+        let currentRoundIndex = 0;
 
-        // ScrollTrigger
-      
+        // ==================== GAME ROUNDS ====================
+        const round1 = {
+            sections: [0, 2, 1, 1, 0],
+            correctAnswers: ["urin4"],
+            timeLimit: 4
+        };
+
+        const round2 = {
+            sections: [0, 1, 1, 2, 0],
+            correctAnswers: ["urin2"],
+            timeLimit: 4
+        };
+
+        const round3 = {
+            sections: [0, 1, 2, 1, 1],
+            correctAnswers: ["urin5"],
+            timeLimit: 4
+        };
+
+        const round4 = {
+            sections: [0, 2, 1, 2, 1],
+            correctAnswers: ["urin5"],
+            timeLimit: 4
+        };
+
+        const round5 = {
+            sections: [0, 2, 1, 1, 1],
+            correctAnswers: ["urin4", "urin5"],
+            timeLimit: 4
+        };
+
+        const round6 = {
+            sections: [1, 1, 1, 2, 1],
+            correctAnswers: ["urin1"],
+            timeLimit: 4
+        };
+
+        const round7 = {
+            sections: [2, 1, 1, 2, 1],
+            correctAnswers: ["urin5"],
+            timeLimit: 4
+        };
+
+        const round8 = {
+            sections: [1, 2, 1, 2, 1],
+            correctAnswers: ["urin1", "urin5"],
+            timeLimit: 4
+        };
+
+        const round9 = {
+            sections: [2, 2, 1, 1, 2],
+            correctAnswers: ["urin4"],
+            timeLimit: 4
+        };
+
+        const round10 = {
+            sections: [2, 1, 2, 2, 1],
+            correctAnswers: ["urin5"],
+            timeLimit: 4
+        };
+
+        const rounds = [round1, round2, round3, round4, round5, round6, round7, round8, round9, round10];
+
+        // ==================== GAME FUNCTIONS ====================
+        function startCountdown() {
+            const countdownElement = document.getElementById('countdown');
+            const messages = ["Ready", "Set", "Go!"];
+            let index = 0;
+
+            countdownElement.textContent = messages[index];
+
+            const countdownInterval = setInterval(() => {
+                index++;
+                if (index < messages.length) {
+                    countdownElement.textContent = messages[index];
+                } else {
+                    clearInterval(countdownInterval);
+                    closeGameModal('modalCorrect');
+                }
+            }, 500);
+        }
+
+        function deadlineTimer(timeLimit) {
+            let timeLeft = timeLimit;
+            timerExpired = false;
+
+            if (deadlineInterval) {
+                clearInterval(deadlineInterval);
+            }
+
+            deadlineInterval = setInterval(() => {
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(deadlineInterval);
+                    timerExpired = true;
+                    closeGameModal('modalCorrect');
+                    document.getElementById('modalWrong').style.display = 'block';
+                }
+            }, 1000);
+        }
+
+        function checkAnswer(sectionId, round) {
+            const correctAnswers = round.correctAnswers;
+
+            if (correctAnswers.includes(sectionId)) {
+                document.getElementById('modalCorrect').style.display = 'block';
+                startCountdown();
+                deadlineTimer(round.timeLimit);
+
+                setTimeout(() => {
+                    closeGameModal('modalCorrect');
+                    currentRoundIndex++;
+
+                    if (currentRoundIndex < rounds.length) {
+                        generateSections(rounds[currentRoundIndex]);
+                    } else {
+                        alert("YOU WON BIAUTCH!");
+                    }
+
+                    const arrow = document.getElementById('mySvg');
+                    arrow.style.animation = 'none';
+                    arrow.offsetHeight;
+                    arrow.style.clipPath = 'inset(0 0 0 0)';
+                    arrow.style.animation = `fadeOutClip ${round.timeLimit - 0.4}s linear forwards`;
+                }, 1500);
+            } else {
+                document.getElementById('modalWrong').style.display = 'block';
+            }
+        }
+
+        function closeGameModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function generateSections(round) {
+            const container = document.querySelector('.containerGame');
+            const arrow = document.getElementById('mySvg');
+
+            container.innerHTML = '';
+
+            arrow.style.display = 'block';
+            arrow.style.clipPath = 'inset(0 0 0 0)';
+            arrow.style.animation = 'none';
+
+            round.sections.forEach((value, index) => {
+                const section = document.createElement('div');
+                section.id = `urin${index + 1}`;
+                section.className = 'section';
+
+                if (value === 1) {
+                    section.innerHTML = `
+                        <img src="game/Img/Asset ${index + 1}.svg" alt="Photo ${index + 1}" style="display: block;" class="free">
+                        <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
+                    `;
+                } else if (value === 2) {
+                    section.innerHTML = `
+                        <img src="game/Img/Asset ${index + 1}.svg" alt="Photo ${index + 1}" style="display: block;">
+                        <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: block;">
+                    `;
+                    section.style.pointerEvents = 'none';
+                } else if (value === 0) {
+                    section.style.pointerEvents = 'none';
+                    section.innerHTML = `
+                        <img src="game/Img/Asset ${index + 1}.svg" alt="Photo ${index + 1}" style="display: none;">
+                        <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
+                    `;
+                }
+
+                container.appendChild(section);
+                section.addEventListener('click', () => {
+                    checkAnswer(section.id, round);
+                });
+            });
+        }
+
+        function restartGame() {
+            currentRoundIndex = 0;
+            generateSections(rounds[currentRoundIndex]);
+            closeGameModal('modalWrong');
+        }
+
+        window.onload = () => {
+            generateSections(round1);
+        };
+
+        // ==================== VIDEO SCROLLTRIGGER ====================
         const video = document.getElementById("video");
 
-// Wait for the video metadata to load
-video.addEventListener('loadedmetadata', () => {
-    const videoDuration = video.duration || 1; // Prevent division by zero
-    const vidContainer = document.getElementById("vidContainer");
-    const rowAbove = document.getElementById("rowAbove");
+        video.addEventListener('loadedmetadata', () => {
+            const videoDuration = video.duration || 1;
+            const vidContainer = document.getElementById("vidContainer");
+            const rowAbove = document.getElementById("rowAbove");
 
-    const rowAboveHeight = rowAbove.offsetHeight;
+            const rowAboveHeight = rowAbove.offsetHeight;
 
-// Set the height of the container based on video duration (in seconds)
-vidContainer.style.height = `${videoDuration * 100 + rowAboveHeight}px`; // Set height in pixels
-// vidContainer.style.border = `solid black 1px`;
-    gsap.registerPlugin(ScrollTrigger);
+            vidContainer.style.height = `${videoDuration * 100 + rowAboveHeight}px`;
+
+            gsap.registerPlugin(ScrollTrigger);
 
     // Create ScrollTrigger instance
     ScrollTrigger.create({
