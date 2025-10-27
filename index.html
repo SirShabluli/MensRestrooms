@@ -27,9 +27,8 @@
             width: 60vw;           /* ← CHANGE THIS to resize game elements */
             max-width: 1000px;     /* Max size cap */
             margin: 0 auto;
-            border: 3px solid #000; /* Black border */
-            padding: 20px;         /* Space inside border */
-            border-radius: 10px;   /* Rounded corners */
+            
+           
         }
 
         .containerGame {
@@ -1139,8 +1138,9 @@
                                     // Unlock eye scroll BEFORE hiding modal
                                     unlockEyeScroll();
 
-                                    mask.style.display = 'none';
-                                    mask.style.visibility = 'hidden';
+                                    // Remove inline styles to allow CSS classes to work again
+                                    mask.style.display = '';
+                                    mask.style.visibility = '';
 
                                     // Reset eye buttons
                                     lRightClicked = 0;
