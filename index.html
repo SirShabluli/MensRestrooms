@@ -142,7 +142,7 @@
 
         #mySvg {
             animation: fadeOutClip forwards;
-            width: 15%;
+            width: 30%;
             height: auto;
             clip-path: inset(0 0 0 0);
             position: relative;
@@ -331,34 +331,6 @@
 
     </div>
 
-
-
-
-    <section class="seventh"><!-- Urinals 1 person -->
-
-        <div class="row">
-            <div class="col7">
-                <h2 class="text-center">if no free urinal exists between you and the other person</h2>
-            </div>
-
-        </div>
-
-        <div class="row mashtenas">
-            <div class="col3 text-center" style="position: relative;">
-                <img src="photos/Asset 3.svg" alt="">
-                <img src="photos/gifs/person1.gif" alt="" style="position: absolute; left: 20%; top: -5%; width: 67%;">
-
-            </div>
-            <div class="col3 text-center"> <img src="photos/Asset 2.svg" alt="">
-
-            </div>
-            <div class="col3 text-center" style="position: relative;">
-                <img src="photos/Asset 1.svg" alt="">
-                <img src="photos/gifs/person2.gif" alt="" style="position: absolute; left: 15%; top: -5%; width: 67%;">
-            </div>
-        </div>
-    </section>
-
     <section class="preGame">
         <div class="row">
             <div class="col7">
@@ -383,6 +355,14 @@
                 <h1>Wrong!</h1>
                 <button id="restart" onclick="restartGame()">Restart</button>
                 <button id="giveup" onclick="giveUpGame()">Give up</button>
+            </div>
+        </div>
+
+        <div id="modalWin" class="game-modal">
+            <div class="game-modal-content">
+                <h1>You Win!</h1>
+                <button id="restart" onclick="playAgain()">Play again</button>
+                <button id="giveup" onclick="continueGame()">Continue</button>
             </div>
         </div>
 
@@ -423,8 +403,30 @@
 
     </section>
 
+    <section class="seventh"><!-- Urinals 1 person -->
 
+        <div class="row">
+            <div class="col7">
+                <h2 class="text-center">if no free urinal exists between you and the other person</h2>
+            </div>
 
+        </div>
+
+        <div class="row mashtenas">
+            <div class="col3 text-center" style="position: relative;">
+                <img src="photos/Asset 3.svg" alt="">
+                <img src="photos/gifs/person1.gif" alt="" style="position: absolute; left: 20%; top: -5%; width: 67%;">
+
+            </div>
+            <div class="col3 text-center"> <img src="photos/Asset 2.svg" alt="">
+
+            </div>
+            <div class="col3 text-center" style="position: relative;">
+                <img src="photos/Asset 1.svg" alt="">
+                <img src="photos/gifs/person2.gif" alt="" style="position: absolute; left: 15%; top: -5%; width: 67%;">
+            </div>
+        </div>
+    </section>
 
 <!--  -->
 
@@ -436,6 +438,12 @@
         </div>
 
         <div class="row">
+            <div class="col7">
+                <h2 style="text-align: center;">or you're just confused</h2>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col4" style="align-content: center; position: relative;">
                 <img src="photos/Asla.svg" alt="" id="toilet">
                 <img src="photos/natznatzimn.svg" alt="" id="sparklettes">
@@ -444,7 +452,7 @@
 
         <div class="row">
             <div class="col7">
-                <h2 style="font-size: 6rem; text-align: center; margin-top: 7rem;">use a toilet</h2>
+                <h2 style="font-size: 6rem; text-align: center; margin-top: 3rem;">use a toilet</h2>
 
             </div>
     </section>
@@ -804,17 +812,12 @@
                     if (currentRoundIndex < rounds.length) {
                         generateSections(rounds[currentRoundIndex]);
                     } else {
-                        alert("YOU WON BIAUTCH!");
-                        unlockScroll(); // Unlock when you win
-
-                        // Scroll down a bit after unlocking
-                        setTimeout(() => {
-                            const currentScroll = window.pageYOffset;
-                            window.scrollTo({
-                                top: currentScroll + 300,
-                                behavior: 'smooth'
-                            });
-                        }, 500);
+                        // Stop the timer and show win modal
+                        if (deadlineInterval) {
+                            clearInterval(deadlineInterval);
+                        }
+                        alert("YOU WON!");
+                        document.getElementById('modalWin').style.display = 'block';
                     }
 
                     const arrow = document.getElementById('mySvg');
@@ -896,6 +899,31 @@
                 const currentScroll = window.pageYOffset;
                 window.scrollTo({
                     top: currentScroll + 500,
+                    behavior: 'smooth'
+                });
+            }, 500);
+        }
+
+        function playAgain() {
+            // Clear any running timers
+            if (deadlineInterval) {
+                clearInterval(deadlineInterval);
+            }
+
+            currentRoundIndex = 0; // Reset to first round
+            generateSections(rounds[currentRoundIndex]); // Regenerate round 1
+            closeGameModal('modalWin');
+        }
+
+        function continueGame() {
+            closeGameModal('modalWin');
+            unlockScroll(); // Unlock scrolling so user can continue
+
+            // Scroll down a bit after continuing
+            setTimeout(() => {
+                const currentScroll = window.pageYOffset;
+                window.scrollTo({
+                    top: currentScroll + 300,
                     behavior: 'smooth'
                 });
             }, 500);
