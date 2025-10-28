@@ -98,21 +98,46 @@
             gap: 10px;
         }
 
-        #restart {
-            border: #fff solid 4px;
+        #restart, #playagain {
+            /* border: #000 solid 4px; */
             font-family: Dokdo;
             font-size: 2rem;
-            color: #fff;
-            background-color: #ffffff00;
+            color: #000;
+            background-color: #f9f9f9;
             cursor: pointer;
+            padding: 5px 10px;
+            box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.3);
         }
 
-        #giveup {
-            border: #fff solid 4px;
+        #restart:hover, #playagain:hover {
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        #restart:active, #playagain:active {
+            transform: scale(0.9);
+        }
+
+        #giveup, #continue {
+            /* border: #000 solid 4px; */
             font-family: Dokdo;
             font-size: 1.5rem;
-            color: #fff;
-            background-color: #ffffff00;
+            color: #000;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            padding: 5px 10px;
+            box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        #giveup:hover, #continue:hover {
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        #giveup:active, #continue:active {
+            transform: scale(0.9);
+        }
+
+        /* Cursor pointer for all clickable elements */
+        button, .section:hover, .show {
             cursor: pointer;
         }
 
@@ -439,7 +464,7 @@
 
         <div class="row">
             <div class="col7">
-                <h2 style="text-align: center;">or you're just confused</h2>
+               
             </div>
         </div>
 
