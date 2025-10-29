@@ -141,6 +141,19 @@
             cursor: pointer;
         }
 
+        /* Disable dragging for all elements */
+        * {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
         .section {
             flex: 1 1 18%;
             height: 100%;
@@ -236,7 +249,7 @@
                     style="right:15% ; height: 30vh; position: absolute;">
             </div>
             <div class="col5">
-                <img src="photos/wallDrawings/SVG/money.svg" alt="" style=" left:0 ; height:30vh; position: absolute;">
+                <img src="photos/wallDrawings/SVG/money.svg" alt="" style=" left:0 ; height:35vh; position: absolute;">
             </div>
         </div>
     </section>
@@ -250,12 +263,12 @@
                 <div class="col6"><img src="photos/nodding animal.gif" alt=""></div>
             </div>
             <div class="row">
-                <img src="photos/wallDrawings/SVG/sole.svg" alt="" style=" left:0 ; width:25vw; position: absolute;">
+                <img src="photos/wallDrawings/SVG/sole.svg" alt="" style=" left:-10% ; width:50vw; position: absolute;">
 
             </div>
             <div class="row">
                 <img src="photos/wallDrawings/SVG/welfare.svg" alt=""
-                    style=" transform: rotate(30deg); right:0 ; width:32vw; position: absolute;">
+                    style=" transform: rotate(0deg); right:-0% ; width:20vw; position: absolute;">
 
             </div>
         </div>
@@ -311,9 +324,9 @@
         <div class="col11" style="position: relative;"><img src="photos/wallDrawings/SVG/thyme.svg" alt=""
                 style=" transform: rotate(0deg); right:75% ; width:25vw; position: absolute;"></div>
     </div>
-    <div class="row" style="margin-bottom: 20rem;">
+    <div class="row" style="margin-bottom: 30rem;">
         <div class="col11" style="position: relative;"><img src="photos/wallDrawings/SVG/troubles.svg" alt=""
-                style=" transform: rotate(0deg); right:0% ; width:25vw; position: absolute;"></div>
+                style=" transform: rotate(0deg); top:-20rem; right:-0% ; width:25vw; position: absolute;"></div>
     </div>
 
     <section class="sixth"> <!-- Urinals clean -->
@@ -953,6 +966,18 @@
                 });
             }, 500);
         }
+
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        // Disable dragging on all images and elements
+        document.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
 
         // Force page to start at top on load/refresh
         if (history.scrollRestoration) {
