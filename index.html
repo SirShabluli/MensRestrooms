@@ -279,7 +279,7 @@
         <div class="wrapper">
             <div class="row" id="rowAbove">
                 <div class="col5" style="padding-bottom: 0;">
-                    <h2> NEVER say more than “Hello” or “Are you well?”</h2>
+                    <h2> NEVER say more than "Hello" or "Are you well?"</h2>
                 </div>
 
                 <div class="row" >
@@ -291,6 +291,10 @@
 
                 </div>
 
+            </div>
+            <div class="row">
+                <img src="photos/wallDrawings/SVG/amanda 2.svg" alt=""
+                    style="transform: rotate(-25deg); left:5%; width:20vw; position: absolute;">
             </div>
         </div>
     </section>
@@ -319,6 +323,10 @@
             <div class="col3 text-center"> <img src="photos/Asset 1.svg" alt="">
             </div>
         </div>
+        <div class="row">
+            <img src="photos/wallDrawings/SVG/sole 2.svg" alt=""
+                style="right:10%; width:22vw; position: absolute;">
+        </div>
     </section>
     <div class="row" style="margin-bottom: 20rem;">
         <div class="col11" style="position: relative;"><img src="photos/wallDrawings/SVG/thyme.svg" alt=""
@@ -327,6 +335,10 @@
     <div class="row" style="margin-bottom: 30rem;">
         <div class="col11" style="position: relative;"><img src="photos/wallDrawings/SVG/troubles.svg" alt=""
                 style=" transform: rotate(0deg); top:-20rem; right:-0% ; width:25vw; position: absolute;"></div>
+    </div>
+    <div class="row" style="margin-bottom: 20rem;">
+        <div class="col11" style="position: relative;"><img src="photos/wallDrawings/SVG/money 2.svg" alt=""
+                style="transform: rotate(15deg);  top:-20vh; left:5%; width:35vw; position: absolute;"></div>
     </div>
 
     <section class="sixth"> <!-- Urinals clean -->
@@ -464,6 +476,10 @@
                 <img src="photos/gifs/person2.gif" alt="" style="position: absolute; left: 15%; top: -5%; width: 67%;">
             </div>
         </div>
+        <div class="row">
+            <img src="photos/wallDrawings/SVG/welfare 2.svg" alt=""
+                style="transform: rotate(-20deg); right:8%; width:25vw; position: absolute;">
+        </div>
     </section>
 
 <!--  -->
@@ -495,6 +511,10 @@
             </div>
     </section>
 
+    <div class="row" style="margin-bottom: 15rem;">
+        <div class="col11" style="position: relative;"><img src="photos/wallDrawings/SVG/thyme 2.svg" alt=""
+                style="transform: rotate(10deg); left:0%; width:40vw; position: absolute;"></div>
+    </div>
 
     <section class="second" style="margin-top: 20vh;"> <!-- urinals title -->
         <div class="row">
@@ -509,6 +529,10 @@
 
     </section>
 
+    <div class="row" style="margin-bottom: 15rem;">
+        <div class="col11" style="position: relative;"><img src="photos/wallDrawings/SVG/troubles 2.svg" alt=""
+                style="transform: rotate(-15deg); right:5%; width:24vw; position: absolute;"></div>
+    </div>
 
     <!-- EYE MOVEMENT START -->
 
@@ -579,6 +603,10 @@
             <div class="col11">
                 <h2>Wash your hands</h2>
             </div>
+        <div class="row">
+            <img src="photos/wallDrawings/SVG/hasta.svg" alt=""
+                style="transform: rotate(20deg); left:3%; width:18vw; position: absolute;">
+        </div>
     </section>
 
     <section class="focusWall">
@@ -901,8 +929,9 @@
                     section.style.pointerEvents = 'none';
                 } else if (value === 0) {
                     section.style.pointerEvents = 'none';
+                    section.style.visibility = 'hidden'; // Keep space but invisible
                     section.innerHTML = `
-                        <img src="game/Img/Asset ${index + 1}.svg" alt="Photo ${index + 1}" style="display: none;">
+                        <img src="game/Img/Asset ${index + 1}.svg" alt="Photo ${index + 1}" style="display: block;">
                         <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
                     `;
                 }
