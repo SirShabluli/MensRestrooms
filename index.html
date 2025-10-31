@@ -186,10 +186,50 @@
             position: relative;
             z-index: 10;
         }
+
+        /* Mobile warning screen */
+        .mobile-warning {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #fff;
+            color: #000;
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .mobile-warning h1 {
+            font-size: 4rem;
+            margin: 0;
+            transform: scaleX(1);
+            letter-spacing: 0;
+            direction: ltr;
+        }
+
+        /* Show warning on small screens */
+        @media screen and (max-width: 1024px) {
+            .mobile-warning {
+                display: flex !important;
+            }
+            body > *:not(.mobile-warning) {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Mobile Warning Screen -->
+    <div class="mobile-warning">
+        <h1>REAL men use NORMAL sized screens</h1>
+    </div>
 
 
 
@@ -352,7 +392,7 @@
         </div>
         <div class="row">
         <div class="col12" style=" display: flex; justify-content: center;">
-            <h2 style="margin: 0; right: 300px; transform: rotate(16.98deg); font-size: 3rem; font-family: Reenie Beanie; color: #FF3131;">
+            <h2 style="margin: 0; margin-bottom: -4rem; right: 300px; transform: rotate(16.98deg); font-size: 3rem; font-family: Reenie Beanie; color: #FF3131;">
                 not for use</h2>
         </div>
     </div>
