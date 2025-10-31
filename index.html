@@ -592,20 +592,16 @@
                 <p>FUCK THEE</p>
 
             </div>
-            <div class="col5" style="position: absolute;
-            left: 50%; right: 50%; transform: translateX(-50%); text-align: center; z-index: 49;">
-                <button class="show">
-                    <h2 id="wall" style=" text-align: center;">Look straight</h2>
-                </button>
-            </div>
-
             <div class="col2">
                 <button class="show">
                     <h2 id="lLeft">look left</h2>
                 </button>
             </div>
 
-            <div class="col7">
+            <div class="col7" style="position: relative;">
+                <button class="show" id="wall" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; border: #000 solid 4px; display: none; padding: 40px 20px; z-index: 49;">
+                    <h2 style="text-align: center; margin: 0;">Look straight</h2>
+                </button>
 
                 <main>
                     <img src="photos/socket.svg" id="anchor">
