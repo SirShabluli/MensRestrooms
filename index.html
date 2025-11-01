@@ -1065,11 +1065,60 @@
             window.scrollTo(0, 0);
         });
 
+        // Preload all images and videos
+        function preloadAssets() {
+            const images = Array.from(document.images);
+            const videos = Array.from(document.querySelectorAll('video'));
+
+            let totalAssets = images.length + videos.length;
+            let loadedAssets = 0;
+
+            console.log(`Preloading ${totalAssets} assets...`);
+
+            const checkAllLoaded = () => {
+                loadedAssets++;
+                console.log(`Loaded ${loadedAssets}/${totalAssets} assets`);
+
+                if (loadedAssets >= totalAssets) {
+                    alert('All assets loaded! Ready to go.');
+                    console.log('All assets loaded!');
+                }
+            };
+
+            // Preload images
+            images.forEach(img => {
+                if (img.complete) {
+                    checkAllLoaded();
+                } else {
+                    img.addEventListener('load', checkAllLoaded);
+                    img.addEventListener('error', checkAllLoaded); // Count errors too
+                }
+            });
+
+            // Preload videos
+            videos.forEach(video => {
+                if (video.readyState >= 3) { // HAVE_FUTURE_DATA or higher
+                    checkAllLoaded();
+                } else {
+                    video.addEventListener('loadeddata', checkAllLoaded);
+                    video.addEventListener('error', checkAllLoaded); // Count errors too
+                }
+            });
+
+            // If no assets to load
+            if (totalAssets === 0) {
+                alert('All assets loaded! Ready to go.');
+            }
+        }
+
         window.onload = () => {
             generateSections(round1);
             // Make sure page starts at the top
             window.scrollTo(0, 0);
             setTimeout(() => window.scrollTo(0, 0), 0);
+
+            // Start preloading
+            preloadAssets();
         };
 
         // Also force scroll to top immediately
