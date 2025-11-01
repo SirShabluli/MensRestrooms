@@ -1135,11 +1135,19 @@
                         if (loader) loader.style.display = 'none';
                         document.body.classList.remove('loading');
 
-                        // Refresh ScrollTrigger after loader is hidden
+                        // Refresh ScrollTrigger and reset video after loader is hidden
                         setTimeout(() => {
                             if (typeof ScrollTrigger !== 'undefined') {
                                 ScrollTrigger.refresh();
                                 console.log('ScrollTrigger refreshed');
+                            }
+
+                            // Reset video to beginning
+                            const vid = document.getElementById("video");
+                            if (vid) {
+                                vid.currentTime = 0;
+                                vid.pause();
+                                console.log('Video reset to beginning');
                             }
                         }, 100);
                     }, 500); // Small delay for smooth transition
@@ -1219,7 +1227,14 @@
         // ==================== VIDEO SCROLLTRIGGER ====================
         const video = document.getElementById("video");
 
+        // Force video to start at beginning on page load
+        video.currentTime = 0;
+        video.pause();
+
         video.addEventListener('loadedmetadata', () => {
+            // Reset video when metadata loads
+            video.currentTime = 0;
+            video.pause();
             const videoDuration = video.duration || 1;
             const vidContainer = document.getElementById("vidContainer");
             const rowAbove = document.getElementById("rowAbove");
