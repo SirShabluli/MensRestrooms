@@ -141,6 +141,21 @@
             cursor: pointer;
         }
 
+        /* Hover scale effect for all buttons */
+        button:hover, .show:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s ease;
+        }
+
+        /* Hover scale effect for urinals in game */
+        .section {
+            transition: transform 0.2s ease;
+        }
+
+        .section:hover {
+            transform: scale(1.08);
+        }
+
         /* Disable dragging for all elements */
         * {
             -webkit-user-drag: none;
@@ -228,7 +243,7 @@
 
     <!-- Mobile Warning Screen -->
     <div class="mobile-warning">
-        <h1>REAL men use NORMAL sized screens</h1>
+        <h1>REAL gentlemen use NORMAL sized screens</h1>
     </div>
 
 
@@ -324,7 +339,7 @@
 
                 <div class="row" >
                     <div class="container" >
-                        <video muted id="video">
+                        <video muted id="video" preload="auto" playsinline>
                             <source src="videos/chat.mp4" type='video/mp4' />
                         </video>
                     </div>
@@ -424,7 +439,7 @@
     <section class="preGame">
         <div class="row">
             <div class="col7">
-                <h2 class="text-center">Test your might</h2>
+                <h2 class="text-center">So... Where would you pee?</h2>
             </div>
         </div>
     </section>
@@ -1069,9 +1084,11 @@
 
             const gameSection = document.querySelector('.game');
             const rect = gameSection.getBoundingClientRect();
+            const viewportCenter = window.innerHeight / 2;
 
-            // Lock when game section top reaches near the top of viewport (100px from top)
-            if (rect.top <= 200) {
+            // Lock when game section center aligns with viewport center
+            const gameSectionCenter = rect.top + (rect.height / 2);
+            if (gameSectionCenter <= viewportCenter && rect.top <= viewportCenter) {
                 lockScroll();
             }
         });
@@ -1112,17 +1129,26 @@
         end: `+=${videoDuration * 100} 80%`, // Scroll duration based on video length (in ms)
         // markers: true,
         pin: true,
-        
-        scrub: 1,
+
+        scrub: 0.5, // Smoother scrubbing (reduced from 1)
         onUpdate: (self) => {
-            const progress = self.progress.toFixed(2); // Get scroll progress (0 to 1)
-            video.currentTime = progress * videoDuration; // Update video time based on scroll
+            const progress = self.progress; // Get scroll progress (0 to 1)
+            const newTime = progress * videoDuration;
+
+            // Only update if there's a meaningful change (reduces jank)
+            if (Math.abs(video.currentTime - newTime) > 0.01) {
+                video.currentTime = newTime;
+            }
+        },
+        onEnter: () => {
+            video.pause(); // Ensure video is paused for scrubbing
         },
         onLeave: () => {
             video.pause(); // Pause the video when leaving
         },
         onEnterBack: () => {
             video.currentTime = 0; // Reset video to the beginning when entering back
+            video.pause();
         },
         onLeaveBack: () => {
             video.pause(); // Pause the video when leaving back
