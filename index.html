@@ -34,7 +34,7 @@
         .containerGame {
             width: 100%;           /* Fill parent */
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: flex-end; /* Align to bottom so person sits on urinal */
             gap: 3%;               /* Bigger gap between urinals */
             margin: 0 auto;
@@ -171,6 +171,7 @@
 
         .section {
             flex: 1 1 18%;
+            max-width: 120px;  /* Maximum width for each urinal */
             height: 100%;
             margin: 0 5px;
             position: relative;
@@ -963,6 +964,9 @@
             arrow.style.animation = 'none';
 
             round.sections.forEach((value, index) => {
+                // Skip creating sections with value 0 (invisible urinals)
+                if (value === 0) return;
+
                 const section = document.createElement('div');
                 section.id = `urin${index + 1}`;
                 section.className = 'section';
@@ -978,13 +982,6 @@
                         <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: block;">
                     `;
                     section.style.pointerEvents = 'none';
-                } else if (value === 0) {
-                    section.style.pointerEvents = 'none';
-                    section.style.visibility = 'hidden'; // Keep space but invisible
-                    section.innerHTML = `
-                        <img src="game/Img/Asset ${index + 1}.svg" alt="Photo ${index + 1}" style="display: block;">
-                        <img src="game/Img/person1.gif" alt="Occupied" class="occupied" style="display: none;">
-                    `;
                 }
 
                 container.appendChild(section);
