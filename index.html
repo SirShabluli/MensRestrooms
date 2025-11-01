@@ -171,7 +171,7 @@
 
         .section {
             flex: 1 1 18%;
-            max-width: 120px;  /* Maximum width for each urinal */
+            max-width: 170px;  /* Maximum width for each urinal */
             height: 100%;
             margin: 0 5px;
             position: relative;
@@ -1134,6 +1134,14 @@
                     setTimeout(() => {
                         if (loader) loader.style.display = 'none';
                         document.body.classList.remove('loading');
+
+                        // Refresh ScrollTrigger after loader is hidden
+                        setTimeout(() => {
+                            if (typeof ScrollTrigger !== 'undefined') {
+                                ScrollTrigger.refresh();
+                                console.log('ScrollTrigger refreshed');
+                            }
+                        }, 100);
                     }, 500); // Small delay for smooth transition
                 }
             };
