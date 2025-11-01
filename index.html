@@ -1137,17 +1137,15 @@
 
                         // Refresh ScrollTrigger and reset video after loader is hidden
                         setTimeout(() => {
-                            if (typeof ScrollTrigger !== 'undefined') {
-                                ScrollTrigger.refresh();
-                                console.log('ScrollTrigger refreshed');
+                            // Reinitialize video ScrollTrigger
+                            if (typeof initVideoScrollTrigger === 'function') {
+                                initVideoScrollTrigger();
                             }
 
-                            // Reset video to beginning
-                            const vid = document.getElementById("video");
-                            if (vid) {
-                                vid.currentTime = 0;
-                                vid.pause();
-                                console.log('Video reset to beginning');
+                            // Refresh all ScrollTriggers
+                            if (typeof ScrollTrigger !== 'undefined') {
+                                ScrollTrigger.refresh();
+                                console.log('All ScrollTriggers refreshed');
                             }
                         }, 100);
                     }, 500); // Small delay for smooth transition
@@ -1226,15 +1224,28 @@
 
         // ==================== VIDEO SCROLLTRIGGER ====================
         const video = document.getElementById("video");
+        let videoScrollTrigger = null;
+        let isInitializing = false;
 
-        // Force video to start at beginning on page load
-        video.currentTime = 0;
-        video.pause();
+        function initVideoScrollTrigger() {
+            // Prevent re-initialization loop
+            if (isInitializing) {
+                console.log('Already initializing, skipping...');
+                return;
+            }
 
-        video.addEventListener('loadedmetadata', () => {
-            // Reset video when metadata loads
+            isInitializing = true;
+
+            // Kill existing ScrollTrigger if it exists
+            if (videoScrollTrigger) {
+                videoScrollTrigger.kill();
+                console.log('Old video ScrollTrigger killed');
+            }
+
+            // Force video reset
             video.currentTime = 0;
             video.pause();
+
             const videoDuration = video.duration || 1;
             const vidContainer = document.getElementById("vidContainer");
             const rowAbove = document.getElementById("rowAbove");
@@ -1245,39 +1256,51 @@
 
             gsap.registerPlugin(ScrollTrigger);
 
-    // Create ScrollTrigger instance
-    ScrollTrigger.create({
-        trigger: "#video",
-        start: "center 35%",
-        end: `+=${videoDuration * 100} 80%`, // Scroll duration based on video length (in ms)
-        // markers: true,
-        pin: true,
+            // Create new ScrollTrigger instance
+            videoScrollTrigger = ScrollTrigger.create({
+                trigger: "#video",
+                start: "center 35%",
+                end: `+=${videoDuration * 100} 80%`,
+                pin: true,
+                scrub: 0.5,
+                onUpdate: (self) => {
+                    const progress = self.progress;
+                    const newTime = progress * videoDuration;
 
-        scrub: 0.5, // Smoother scrubbing (reduced from 1)
-        onUpdate: (self) => {
-            const progress = self.progress; // Get scroll progress (0 to 1)
-            const newTime = progress * videoDuration;
+                    if (Math.abs(video.currentTime - newTime) > 0.01) {
+                        video.currentTime = newTime;
+                    }
+                },
+                onEnter: () => {
+                    video.pause();
+                },
+                onLeave: () => {
+                    video.pause();
+                },
+                onEnterBack: () => {
+                    video.currentTime = 0;
+                    video.pause();
+                },
+                onLeaveBack: () => {
+                    video.pause();
+                },
+            });
 
-            // Only update if there's a meaningful change (reduces jank)
-            if (Math.abs(video.currentTime - newTime) > 0.01) {
-                video.currentTime = newTime;
+            console.log('Video ScrollTrigger initialized');
+            isInitializing = false;
+        }
+
+        // Initialize when video metadata loads (only once)
+        video.addEventListener('loadedmetadata', () => {
+            if (!isInitializing && !videoScrollTrigger) {
+                initVideoScrollTrigger();
             }
-        },
-        onEnter: () => {
-            video.pause(); // Ensure video is paused for scrubbing
-        },
-        onLeave: () => {
-            video.pause(); // Pause the video when leaving
-        },
-        onEnterBack: () => {
-            video.currentTime = 0; // Reset video to the beginning when entering back
-            video.pause();
-        },
-        onLeaveBack: () => {
-            video.pause(); // Pause the video when leaving back
-        },
-    });
-});
+        });
+
+        // Also try to initialize immediately if metadata already loaded
+        if (video.readyState >= 1) {
+            initVideoScrollTrigger();
+        }
 
 
 
