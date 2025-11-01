@@ -228,6 +228,46 @@
             direction: ltr;
         }
 
+        /* Loader screen */
+        .loader-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #333;
+            border-top: 6px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            color: #fff;
+            font-size: 2rem;
+            font-family: Dokdo;
+        }
+
+        body.loading {
+            overflow: hidden;
+        }
+
         /* Show warning on small screens */
         @media screen and (max-width: 1024px) {
             .mobile-warning {
@@ -240,7 +280,13 @@
     </style>
 </head>
 
-<body>
+<body class="loading">
+
+    <!-- Loader Screen -->
+    <div class="loader-screen" id="loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Loading...</div>
+    </div>
 
     <!-- Mobile Warning Screen -->
     <div class="mobile-warning">
@@ -1069,6 +1115,8 @@
         function preloadAssets() {
             const images = Array.from(document.images);
             const videos = Array.from(document.querySelectorAll('video'));
+            const loader = document.getElementById('loader');
+            const loaderText = document.querySelector('.loader-text');
 
             let totalAssets = images.length + videos.length;
             let loadedAssets = 0;
@@ -1080,8 +1128,13 @@
                 console.log(`Loaded ${loadedAssets}/${totalAssets} assets`);
 
                 if (loadedAssets >= totalAssets) {
-                    alert('All assets loaded! Ready to go.');
                     console.log('All assets loaded!');
+
+                    // Hide loader and enable scrolling
+                    setTimeout(() => {
+                        if (loader) loader.style.display = 'none';
+                        document.body.classList.remove('loading');
+                    }, 500); // Small delay for smooth transition
                 }
             };
 
@@ -1107,7 +1160,8 @@
 
             // If no assets to load
             if (totalAssets === 0) {
-                alert('All assets loaded! Ready to go.');
+                if (loader) loader.style.display = 'none';
+                document.body.classList.remove('loading');
             }
         }
 
